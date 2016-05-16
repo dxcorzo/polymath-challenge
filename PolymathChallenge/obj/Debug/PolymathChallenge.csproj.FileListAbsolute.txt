@@ -1,0 +1,14 @@
+E:\Projects\PolymathChallenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe.config
+E:\Projects\PolymathChallenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe
+E:\Projects\PolymathChallenge\PolymathChallenge\bin\Debug\PolymathChallenge.pdb
+E:\Projects\PolymathChallenge\PolymathChallenge\bin\Debug\RestSharp.dll
+E:\Projects\PolymathChallenge\PolymathChallenge\bin\Debug\RestSharp.xml
+E:\Projects\PolymathChallenge\PolymathChallenge\obj\Debug\PolymathChallenge.csprojResolveAssemblyReference.cache
+E:\Projects\PolymathChallenge\PolymathChallenge\obj\Debug\PolymathChallenge.exe
+E:\Projects\PolymathChallenge\PolymathChallenge\obj\Debug\PolymathChallenge.pdb
+E:\GitHub\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe.config
+E:\GitHub\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.exe
+E:\GitHub\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.pdb
+E:\GitHub\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe
+E:\GitHub\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.pdb
+E:\GitHub\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.csprojResolveAssemblyReference.cache
