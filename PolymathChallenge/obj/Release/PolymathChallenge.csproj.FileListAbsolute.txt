@@ -1,0 +1,7 @@
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Release\PolymathChallenge.exe.config
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Release\PolymathChallenge.exe
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Release\PolymathChallenge.pdb
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Release\System.Data.SQLite.dll
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Release\System.Data.SQLite.xml
+D:\GIT\polymath-challenge\PolymathChallenge\obj\Release\PolymathChallenge.exe
+D:\GIT\polymath-challenge\PolymathChallenge\obj\Release\PolymathChallenge.pdb
