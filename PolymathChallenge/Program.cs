@@ -15,6 +15,8 @@ namespace PolymathChallenge
 {
     class Program
     {
+        static SQLiteConnection _conexionDb;
+
         static void Main(string[] args)
         {
             ForegroundColor = ConsoleColor.Cyan;
@@ -26,45 +28,149 @@ namespace PolymathChallenge
             {
                 case Transaccion.Recompilar:
                     ForegroundColor = ConsoleColor.White;
-                    WriteLine("Inicio consulta categorias API...");
+                    Write("Consultando API...");
                     ConsultarAPI();
 
-                    ForegroundColor = ConsoleColor.DarkGreen;
-                    WriteLine("Fin consulta categorias API");
+                    ForegroundColor = ConsoleColor.Green;
+                    WriteLine(" / OK");
 
                     ForegroundColor = ConsoleColor.White;
-                    WriteLine("Reconstruyendo base de datos....");
+                    Write("Reconstruyendo db...");
                     ConstruirDB();
 
-                    //WriteLine("Recompilar");
-                    break;
-                case Transaccion.Render:
-                    //GenerarHTMLCategorizacion(123);
+                    ForegroundColor = ConsoleColor.Green;
+                    WriteLine(" / OK");
 
                     ForegroundColor = ConsoleColor.White;
-                    WriteLine($"Render {idCat}");
+                    Write("Cargando info a db ...");
+                    CargarCategoriasDB();
+
+                    ForegroundColor = ConsoleColor.Green;
+                    WriteLine(" / OK");
+                    break;
+                case Transaccion.Render:
+                    ForegroundColor = ConsoleColor.White;
+                    Write("Renderizando categoria...");
+                    GenerarHTMLCategorizacion(idCat);
+
+                    ForegroundColor = ConsoleColor.Green;
+                    WriteLine(" / OK");
                     break;
             }
-
         }
 
+        private static void GenerarHTMLCategorizacion(double idCategoria)
+        {
+            using (_conexionDb = new SQLiteConnection(Configuracion.CadenaConexion))
+            {
+                _conexionDb.Open();
+                using (var cmd = new SQLiteCommand(_conexionDb))
+                {
+                    using (var transaction = _conexionDb.BeginTransaction())
+                    {
+                        string sql = $"SELECT * FROM Categoria";
+                        cmd.CommandText = sql;
+                        SQLiteDataReader reader = cmd.ExecuteReader();
+
+                        DataTable table = new DataTable();
+                        table.Load(reader);
+                        DataRow[] parentMenus = table.Select($"ParentId = {idCategoria}");
+
+                        var sb = new StringBuilder();
+                        string unorderedList = GenerarArbol(parentMenus, table, sb);
+
+                        File.WriteAllText(string.Format(Configuracion.PathHtml, idCategoria), unorderedList);
+
+                        transaction.Commit();
+                    }
+                }
+            }
+        }
+
+        private static string GenerarArbol(DataRow[] menu, DataTable table, StringBuilder sb)
+        {
+            sb.AppendLine("<ul>");
+
+            if (menu.Length > 0)
+            {
+                foreach (DataRow dr in menu)
+                {
+                    string menuText = dr["Name"].ToString();
+                    string line = $@"<li><label>{menuText}</label>";
+                    sb.Append(line);
+
+                    string pid = dr["Id"].ToString();
+                    string parentId = dr["ParentId"].ToString();
+
+                    DataRow[] subMenu = table.Select($"ParentId = {pid}");
+                    if (subMenu.Length > 0 && !pid.Equals(parentId))
+                    {
+                        var subMenuBuilder = new StringBuilder();
+                        sb.Append(GenerarArbol(subMenu, table, subMenuBuilder));
+                    }
+
+                    sb.Append("</li>");
+                }
+            }
+            sb.Append("</ul>");
+            return sb.ToString();
+        }
+
+        private static void CargarCategoriasDB()
+        {
+            DataSet ds = new DataSet();
+            ds.ReadXml(new XmlTextReader(Configuracion.PathXml));
+
+            using (_conexionDb = new SQLiteConnection(Configuracion.CadenaConexion))
+            {
+                _conexionDb.Open();
+
+                using (var cmd = new SQLiteCommand(_conexionDb))
+                {
+                    using (var transaction = _conexionDb.BeginTransaction())
+                    {
+                        foreach (DataRow row in ds.Tables["Category"].Rows)
+                        {
+                            string sql = string.Format
+                            ("INSERT INTO Categoria (ID, ParentID, Name, Level, BestOfferEnabled) VALUES ({0}, {1}, '{2}', {3}, {4})",
+                                row["CategoryID"],
+                                row["CategoryParentID"],
+                                row["CategoryName"].ToString().Replace("'", "''"),
+                                row["CategoryLevel"],
+                                row["BestOfferEnabled"].ToString() == "true" ? "1" : "0"
+                            );
+
+                            cmd.CommandText = sql;
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                }
+            }
+        }
 
         private static void ConstruirDB()
         {
-            SQLiteConnection.CreateFile("db.sqlite");
+            //Crear db
+            SQLiteConnection.CreateFile(Configuracion.NombreDb);
 
-            var m_dbConnection = new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
-            m_dbConnection.Open();
+            using (_conexionDb = new SQLiteConnection(Configuracion.CadenaConexion))
+            {
+                _conexionDb.Open();
 
-            string sql = "CREATE TABLE Categoria (name varchar(20), score int)";
+                using (var cmd = new SQLiteCommand(_conexionDb))
+                {
+                    using (var transaction = _conexionDb.BeginTransaction())
+                    {
+                        string sql = "CREATE TABLE Categoria (Id INT, ParentId INT, Name VARCHAR(100), Level INT, BestOfferEnabled BIT)";
+                        cmd.CommandText = sql;
+                        cmd.ExecuteNonQuery();
 
-CategoryID
-CategoryName
-CategoryLevel
-BestOfferEnabled
-
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                }
+            }
         }
 
         private static void ConsultarAPI()
@@ -98,10 +204,9 @@ BestOfferEnabled
             StreamReader responseReader = new StreamReader(r.GetResponse().GetResponseStream());
             var responseData = responseReader.ReadToEnd();
 
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "categorias.xml", responseData, Encoding.UTF8);
+            File.WriteAllText(Configuracion.PathXml, responseData, Encoding.UTF8);
         }
         
-
         private static Transaccion DeterminarTarea(string[] args, ref double idCat)
         {
             Transaccion retorno = Transaccion.NoDefinido;
@@ -130,15 +235,6 @@ BestOfferEnabled
                     }
                 }
             }
-
-            return retorno;
-        }
-
-        private static List<Categoria> ConsultarApiCategorias()
-        {
-            List<Categoria> retorno = new List<Categoria>();
-
-
 
             return retorno;
         }

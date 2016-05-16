@@ -12,3 +12,11 @@ E:\GitHub\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.pdb
 E:\GitHub\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe
 E:\GitHub\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.pdb
 E:\GitHub\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.csprojResolveAssemblyReference.cache
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe.config
+D:\GIT\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.exe
+D:\GIT\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.pdb
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.exe
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Debug\PolymathChallenge.pdb
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Debug\System.Data.SQLite.dll
+D:\GIT\polymath-challenge\PolymathChallenge\bin\Debug\System.Data.SQLite.xml
+D:\GIT\polymath-challenge\PolymathChallenge\obj\Debug\PolymathChallenge.csprojResolveAssemblyReference.cache
